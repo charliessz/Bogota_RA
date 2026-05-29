@@ -14,6 +14,7 @@ type Section = "map" | "info" | "rules" | "environment" | null;
 export default function App() {
   const [activeSection, setActiveSection] = useState<Section>(null);
   const [markerDetected, setMarkerDetected] = useState(false);
+  const [selectedPark, setSelectedPark] = useState<string | null>(null);
 
   useEffect(() => {
     // Close any open section when the marker is lost.
@@ -27,6 +28,7 @@ export default function App() {
       <ARBackground
         onMarkerFound={() => setMarkerDetected(true)}
         onMarkerLost={() => setMarkerDetected(false)}
+        selectedPark={selectedPark}
       />
 
       {/* Aviso de marcador Hiro */}
@@ -66,7 +68,7 @@ export default function App() {
                 <MenuButton
                   icon={Map}
                   label="Mapa de parques"
-                  onClick={() => setActiveSection("map")}
+                    onClick={() => setActiveSection("map")}
                 />
                 <MenuButton
                   icon={Info}
@@ -95,7 +97,14 @@ export default function App() {
 
       {activeSection === "map" && (
         <SectionPanel title="Mapa de parques" onClose={() => setActiveSection(null)}>
-          <MapSection />
+          <MapSection
+            selectedPark={selectedPark}
+            onSelectPark={(name) => {
+              setSelectedPark(name);
+              // close panel so the AR view can display the model
+              setActiveSection(null);
+            }}
+          />
         </SectionPanel>
       )}
       {activeSection === "info" && (

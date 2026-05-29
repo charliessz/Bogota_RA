@@ -6,9 +6,10 @@ const HIRO_PATTERN =
 interface ARBackgroundProps {
   onMarkerFound?: () => void;
   onMarkerLost?: () => void;
+  selectedPark?: string | null;
 }
 
-export function ARBackground({ onMarkerFound, onMarkerLost }: ARBackgroundProps) {
+export function ARBackground({ onMarkerFound, onMarkerLost, selectedPark }: ARBackgroundProps) {
   useEffect(() => {
     const marker = document.querySelector("#hiro-marker");
     if (!marker) return;
@@ -25,7 +26,7 @@ export function ARBackground({ onMarkerFound, onMarkerLost }: ARBackgroundProps)
     };
   }, [onMarkerFound, onMarkerLost]);
 
-  return (
+    return (
     <div className="ar-viewport fixed inset-0 z-0 overflow-hidden">
       <a-scene
         embedded
@@ -47,37 +48,34 @@ export function ARBackground({ onMarkerFound, onMarkerLost }: ARBackgroundProps)
               height="2"
               color="#7EC850"
             />
-            <a-cylinder
-              position="-0.5 0.35 -0.35"
-              radius="0.05"
-              height="0.35"
-              color="#8B5A2B"
-            />
-            <a-sphere position="-0.5 0.65 -0.35" radius="0.18" color="#228B22" />
-            <a-cylinder
-              position="0.5 0.35 -0.35"
-              radius="0.05"
-              height="0.35"
-              color="#8B5A2B"
-            />
-            <a-sphere position="0.5 0.65 -0.35" radius="0.18" color="#2E8B57" />
-            <a-box
-              position="0.35 0.15 0.15"
-              depth="0.2"
-              height="0.08"
-              width="0.45"
-              color="#B5651D"
-            />
-            <a-cylinder
-              position="-0.2 0.15 0.55"
-              radius="0.08"
-              height="0.28"
-              color="#2E8B57"
-            />
+            {/* Placeholder for selected park 3D model. Models should be placed in `public/models/` */}
+            {renderParkModel(selectedPark)}
           </a-entity>
         </a-marker>
         <a-entity camera />
       </a-scene>
     </div>
+  );
+}
+
+function renderParkModel(selectedPark?: string | null) {
+  if (!selectedPark) return null;
+
+  const models: Record<string, string> = {
+    "Parque Simón Bolívar": "C:/Users/Andres Siza/OneDrive/Escritorio/bogota_ra/models/Simon_Bolivar.glb",
+    "Parque Nacional Olaya Herrera": "/models/parque_olaya_herrera.glb",
+    "Parque El Tunal": "/models/parque_el_tunal.glb",
+    "Parque de la 93": "/models/parque_de_la_93.glb",
+    "Parque Salitre Mágico": "/models/parque_salitre_magico.glb",
+    "Jardín Botánico José Celestino Mutis": "/models/jardin_botanico_mutis.glb",
+  };
+
+  const modelUrl = models[selectedPark];
+  if (!modelUrl) return null;
+
+  return (
+    // Use `gltf-model` component to load glTF/glb models. Adjust scale/position per model as needed.
+    // A-Frame accepts attributes as strings.
+    <a-entity gltf-model={`url(${modelUrl})`} scale="0.5 0.5 0.5" position="0 0 0" />
   );
 }
