@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Bogotá Verde AR</title>
+
+  <!-- A-Frame -->
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+  <!-- AR.js para A-Frame (marker-based + location) -->
+  <!-- Versión recomendada en la documentación de AR.js -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Escena A-Frame con AR.js activado -->
+  <a-scene
+    embedded
+    vr-mode-ui="enabled: false"
+    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+  >
+
+    <!-- MARCADOR HIRO: todo el contenido se pega a este marcador -->
+    <!-- Puedes usar preset="hiro" según la doc de AR.js -->
+    <a-marker preset="hiro">
+
+      <!-- ESCENA 3D SENCILLA DEL PARQUE -->
+      <!-- Suelo -->
+      <a-plane position="0 0 0"
+               rotation="-90 0 0"
+               width="3" height="3"
+               color="#7EC850">
+      </a-plane>
+
+      <!-- Árbol 1 -->
+      <a-cylinder position="-0.8 0.5 -0.5"
+                  radius="0.05" height="0.5"
+                  color="#8B5A2B">
+      </a-cylinder>
+      <a-sphere   position="-0.8 0.9 -0.5"
+                  radius="0.25"
+                  color="#228B22">
+      </a-sphere>
+
+      <!-- Árbol 2 -->
+      <a-cylinder position="0.8 0.5 -0.5"
+                  radius="0.05" height="0.5"
+                  color="#8B5A2B">
+      </a-cylinder>
+      <a-sphere   position="0.8 0.9 -0.5"
+                  radius="0.25"
+                  color="#2E8B57">
+      </a-sphere>
+
+      <!-- Banca -->
+      <a-box position="0.5 0.2 0.2"
+             depth="0.3" height="0.1" width="0.6"
+             color="#B5651D">
+      </a-box>
+
+      <!-- Caneca -->
+      <a-cylinder position="-0.3 0.2 0.8"
+                  radius="0.1" height="0.4"
+                  color="#2E8B57">
+      </a-cylinder>
+
+      <!-- PANEL SUPERIOR: TÍTULO -->
+      <a-entity position="0 1.4 0">
+        <a-plane width="2.2" height="0.4"
+                 color="#ffffff"
+                 opacity="0.9">
+        </a-plane>
+        <a-entity position="-1.0 0 0.01"
+                  text="value: Bogotá Verde AR; color: #006400; width: 5;">
+        </a-entity>
+      </a-entity>
+
+      <!-- PANEL MENÚ PRINCIPAL (LISTA DE SECCIONES) -->
+      <a-plane id="panel-menu"
+               position="0 1.0 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#f5f5f5"
+               opacity="0.95">
+      </a-plane>
+
+      <!-- Etiqueta de instrucciones -->
+      <a-entity position="-1.1 1.4 0.11"
+                rotation="-45 0 0"
+                text="value: Mira un botón para seleccionarlo; color: #333; width: 3;">
+      </a-entity>
+
+      <!-- Botones del menú (clase 'clickable') -->
+      <a-entity id="btn-mapa" class="clickable"
+                position="-1.0 1.15 0.11"
+                rotation="-45 0 0"
+                text="value: 1) Mapa de parques; color: #000; width: 4;">
+      </a-entity>
+
+      <a-entity id="btn-info" class="clickable"
+                position="-1.0 1.05 0.11"
+                rotation="-45 0 0"
+                text="value: 2) Información del lugar; color: #000; width: 4;">
+      </a-entity>
+
+      <a-entity id="btn-historia" class="clickable"
+                position="-1.0 0.95 0.11"
+                rotation="-45 0 0"
+                text="value: 3) Historia y cultura; color: #000; width: 4;">
+      </a-entity>
+
+      <a-entity id="btn-ambiente" class="clickable"
+                position="-1.0 0.85 0.11"
+                rotation="-45 0 0"
+                text="value: 4) Cuidado ambiental; color: #000; width: 4;">
+      </a-entity>
+
+      <a-entity id="btn-normas" class="clickable"
+                position="-1.0 0.75 0.11"
+                rotation="-45 0 0"
+                text="value: 5) Normas de uso; color: #000; width: 4;">
+      </a-entity>
+
+      <a-entity id="btn-seguridad" class="clickable"
+                position="-1.0 0.65 0.11"
+                rotation="-45 0 0"
+                text="value: 6) Seguridad; color: #000; width: 4;">
+      </a-entity>
+
+      <a-entity id="btn-quiz" class="clickable"
+                position="-1.0 0.55 0.11"
+                rotation="-45 0 0"
+                text="value: 7) Mini quiz; color: #0000aa; width: 4;">
+      </a-entity>
+
+      <!-- PANEL CONTENIDO: MAPA DE PARQUES -->
+      <a-plane id="panel-mapa"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#ffffff"
+               visible="false">
+        <a-entity position="-1.1 0.4 0.01"
+                  text="value: Parques destacados:\n- Parque Simón Bolívar\n- Parque Nacional\n- Parque El Tunal\n- Parque de los Novios; width: 4; color: #000;">
+        </a-entity>
+        <a-entity position="-1.1 -0.2 0.01"
+                  text="value: Selecciona un parque en el menú Información para ver más detalles.; width: 4; color: #555;">
+        </a-entity>
+      </a-plane>
+
+      <!-- PANEL CONTENIDO: INFORMACIÓN DEL LUGAR -->
+      <a-plane id="panel-info"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#ffffff"
+               visible="false">
+        <a-entity position="-1.1 0.4 0.01"
+                  text="value: Ejemplo - Parque Simón Bolívar:\nUbicación: Teusaquillo.\nActividades: deporte, picnic, conciertos.\nServicios: ciclovía, baños, zonas verdes amplias.; width: 4; color: #000;">
+        </a-entity>
+        <a-entity position="-1.1 -0.2 0.01"
+                  text="value: Recomendación: llega temprano y usa bloqueador solar.\nRespeta las zonas verdes y sigue la señalización del parque.; width: 4; color: #555;">
+        </a-entity>
+      </a-plane>
+
+      <!-- PANEL CONTENIDO: HISTORIA Y CULTURA CIUDADANA -->
+      <a-plane id="panel-historia"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#ffffff"
+               visible="false">
+        <a-entity position="-1.1 0.4 0.01"
+                  text="value: Historia y cultura ciudadana:\nLos parques de Bogotá son espacios clave para la recreación,\nla cultura y el encuentro ciudadano.\nSon escenarios de festivales, conciertos y actividades deportivas.; width: 4; color: #000;">
+        </a-entity>
+        <a-entity position="-1.1 -0.1 0.01"
+                  text="value: Cultura ciudadana:\nComparte el espacio con respeto, escucha a los demás,\ny cuida el mobiliario para que otros también lo disfruten.; width: 4; color: #555;">
+        </a-entity>
+      </a-plane>
+
+      <!-- PANEL CONTENIDO: CUIDADO AMBIENTAL -->
+      <a-plane id="panel-ambiente"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#ffffff"
+               visible="false">
+        <a-entity position="-1.1 0.4 0.01"
+                  text="value: Cuidado ambiental:\n- Deposita los residuos en las canecas.\n- No pises las zonas reforestadas.\n- Protege los árboles y no arranques ramas.\n- Respeta la fauna urbana (aves, ardillas, etc.).; width: 4; color: #000;">
+        </a-entity>
+        <a-entity position="-1.1 -0.2 0.01"
+                  text="value: Pequeñas acciones como separar residuos y\nreducir el ruido ayudan a cuidar el entorno.; width: 4; color: #555;">
+        </a-entity>
+      </a-plane>
+
+      <!-- PANEL CONTENIDO: NORMAS DE USO -->
+      <a-plane id="panel-normas"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#ffffff"
+               visible="false">
+        <a-entity position="-1.1 0.4 0.01"
+                  text="value: Normas de uso del espacio público:\n- Cuida el mobiliario urbano.\n- Respeta las zonas peatonales y ciclorrutas.\n- No dañes el césped ni las flores.\n- Mantén controladas tus mascotas (correa y bozal si se requiere).; width: 4; color: #000;">
+        </a-entity>
+        <a-entity position="-1.1 -0.2 0.01"
+                  text="value: Cumplir estas normas mejora la convivencia\ny hace más seguro el uso de los parques.; width: 4; color: #555;">
+        </a-entity>
+      </a-plane>
+
+      <!-- PANEL CONTENIDO: SEGURIDAD -->
+      <a-plane id="panel-seguridad"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#ffffff"
+               visible="false">
+        <a-entity position="-1.1 0.4 0.01"
+                  text="value: Recomendaciones de seguridad:\n- Cuida tus objetos personales.\n- Evita zonas solas en horarios nocturnos.\n- Sigue la señalización y los avisos oficiales.\n- Identifica puntos de encuentro con tus acompañantes.; width: 4; color: #000;">
+        </a-entity>
+        <a-entity position="-1.1 -0.2 0.01"
+                  text="value: Ante cualquier emergencia, busca al personal de seguridad\no comunícate con las líneas de atención de la ciudad.; width: 4; color: #555;">
+        </a-entity>
+      </a-plane>
+
+      <!-- PANEL CONTENIDO: MINI QUIZ -->
+      <a-plane id="panel-quiz"
+               position="0 0.7 0.1"
+               rotation="-45 0 0"
+               width="2.4" height="1.4"
+               color="#fff8dc"
+               visible="false">
+        <a-entity id="quiz-pregunta"
+                  position="-1.1 0.4 0.01"
+                  text="value: Pregunta; width: 4; color: #000;">
+        </a-entity>
+
+        <a-entity id="quiz-opcionA" class="clickable"
+                  position="-1.1 0.1 0.01"
+                  text="value: A) ...; width: 4; color: #000;">
+        </a-entity>
+
+        <a-entity id="quiz-opcionB" class="clickable"
+                  position="-1.1 -0.05 0.01"
+                  text="value: B) ...; width: 4; color: #000;">
+        </a-entity>
+
+        <a-entity id="quiz-feedback"
+                  position="-1.1 -0.3 0.01"
+                  text="value: ; width: 4; color: #006400;">
+        </a-entity>
+      </a-plane>
+
+    </a-marker>
+
+    <!-- CÁMARA + CURSOR (CENTRO DE LA PANTALLA) -->
+    <!-- El cursor lanza rayos contra elementos con clase 'clickable' -->
+    <a-entity camera look-controls>
+      <a-cursor
+        raycaster="objects: .clickable"
+        fuse="false"
+        material="color: #FF0000; shader: flat;"
+        geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02">
+      </a-cursor>
+    </a-entity>
+
+  </a-scene>
+
+  <!-- LÓGICA DE INTERACCIÓN EN JS -->
+  <script>
+    // Banco de preguntas del quiz
+    const preguntas = [
+      {
+        texto: "¿Qué debes hacer con la basura en el parque?",
+        opciones: [
+          "A) Tirarla al suelo.",
+          "B) Depositarla en las canecas."
+        ],
+        correcta: 1,
+        feedbackOk: "Correcto, usar las canecas cuida el entorno.",
+        feedbackError: "No es correcto, la basura siempre va en las canecas."
+      },
+      {
+        texto: "Si llevas mascota al parque, ¿qué es lo adecuado?",
+        opciones: [
+          "A) Dejarla suelta sin supervisión.",
+          "B) Llevarla con correa y recoger sus desechos."
+        ],
+        correcta: 1,
+        feedbackOk: "Muy bien, así cuidas a otros usuarios y al parque.",
+        feedbackError: "Recuerda usar correa y recoger los desechos de tu mascota."
+      },
+      {
+        texto: "En la noche, lo más seguro es:",
+        opciones: [
+          "A) Ir solo a zonas solas.",
+          "B) Preferir zonas iluminadas y con más gente."
+        ],
+        correcta: 1,
+        feedbackOk: "Exacto, las zonas iluminadas son más seguras.",
+        feedbackError: "Es mejor evitar zonas solas en horarios nocturnos."
+      }
+    ];
+
+    let indicePregunta = 0;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Botones del menú
+      const btnMapa      = document.querySelector("#btn-mapa");
+      const btnInfo      = document.querySelector("#btn-info");
+      const btnHistoria  = document.querySelector("#btn-historia");
+      const btnAmbiente  = document.querySelector("#btn-ambiente");
+      const btnNormas    = document.querySelector("#btn-normas");
+      const btnSeguridad = document.querySelector("#btn-seguridad");
+      const btnQuiz      = document.querySelector("#btn-quiz");
+
+      // Paneles de contenido
+      const panelMapa      = document.querySelector("#panel-mapa");
+      const panelInfo      = document.querySelector("#panel-info");
+      const panelHistoria  = document.querySelector("#panel-historia");
+      const panelAmbiente  = document.querySelector("#panel-ambiente");
+      const panelNormas    = document.querySelector("#panel-normas");
+      const panelSeguridad = document.querySelector("#panel-seguridad");
+      const panelQuiz      = document.querySelector("#panel-quiz");
+
+      // Elementos del quiz
+      const preguntaEl = document.querySelector("#quiz-pregunta");
+      const opcionAEl  = document.querySelector("#quiz-opcionA");
+      const opcionBEl  = document.querySelector("#quiz-opcionB");
+      const feedbackEl = document.querySelector("#quiz-feedback");
+
+      // Ocultar todos los paneles
+      function ocultarTodos() {
+        panelMapa.setAttribute("visible", false);
+        panelInfo.setAttribute("visible", false);
+        panelHistoria.setAttribute("visible", false);
+        panelAmbiente.setAttribute("visible", false);
+        panelNormas.setAttribute("visible", false);
+        panelSeguridad.setAttribute("visible", false);
+        panelQuiz.setAttribute("visible", false);
+      }
+
+      // Mostrar un panel específico
+      function mostrarPanel(panel) {
+        ocultarTodos();
+        panel.setAttribute("visible", true);
+      }
+
+      // Cargar una pregunta del quiz
+      function cargarPregunta(i) {
+        const p = preguntas[i];
+        preguntaEl.setAttribute("text", "value", p.texto);
+        opcionAEl.setAttribute("text", "value", p.opciones[0]);
+        opcionBEl.setAttribute("text", "value", p.opciones[1]);
+        feedbackEl.setAttribute("text", "value", "");
+      }
+
+      // Manejar respuesta del quiz
+      function responder(indiceOpcion) {
+        const p = preguntas[indicePregunta];
+        if (indiceOpcion === p.correcta) {
+          feedbackEl.setAttribute("text", "value", p.feedbackOk);
+        } else {
+          feedbackEl.setAttribute("text", "value", p.feedbackError);
+        }
+
+        // Avanzar automáticamente a la siguiente pregunta después de 3 segundos
+        setTimeout(() => {
+          indicePregunta = (indicePregunta + 1) % preguntas.length;
+          cargarPregunta(indicePregunta);
+        }, 3000);
+      }
+
+      // Listeners de botones de menú
+      btnMapa.addEventListener("click", () => {
+        mostrarPanel(panelMapa);
+      });
+
+      btnInfo.addEventListener("click", () => {
+        mostrarPanel(panelInfo);
+      });
+
+      btnHistoria.addEventListener("click", () => {
+        mostrarPanel(panelHistoria);
+      });
+
+      btnAmbiente.addEventListener("click", () => {
+        mostrarPanel(panelAmbiente);
+      });
+
+      btnNormas.addEventListener("click", () => {
+        mostrarPanel(panelNormas);
+      });
+
+      btnSeguridad.addEventListener("click", () => {
+        mostrarPanel(panelSeguridad);
+      });
+
+      btnQuiz.addEventListener("click", () => {
+        mostrarPanel(panelQuiz);
+        indicePregunta = 0;
+        cargarPregunta(indicePregunta);
+      });
+
+      // Listeners de opciones del quiz
+      opcionAEl.addEventListener("click", () => responder(0));
+      opcionBEl.addEventListener("click", () => responder(1));
+    });
+  </script>
+</body>
+</html>
