@@ -7,12 +7,20 @@ import { InfoSection } from "./components/InfoSection";
 import { RulesSection } from "./components/RulesSection";
 import { EnvironmentSection } from "./components/EnvironmentSection";
 import { ARBackground } from "./components/ARBackground";
+import { useEffect } from "react";
 
 type Section = "map" | "info" | "rules" | "environment" | null;
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<Section>(null);
   const [markerDetected, setMarkerDetected] = useState(false);
+
+  useEffect(() => {
+    // Close any open section when the marker is lost.
+    if (!markerDetected) {
+      setActiveSection(null);
+    }
+  }, [markerDetected]);
 
   return (
     <div className="size-full relative overflow-hidden">
@@ -53,28 +61,34 @@ export default function App() {
             <p className="text-sm text-gray-700 text-center mb-4 sm:mb-6 font-medium">
               Selecciona una sección:
             </p>
-            <div className="grid grid-cols-2 gap-3 sm:gap-6 place-items-center">
-              <MenuButton
-                icon={Map}
-                label="Mapa de parques"
-                onClick={() => setActiveSection("map")}
-              />
-              <MenuButton
-                icon={Info}
-                label="Información"
-                onClick={() => setActiveSection("info")}
-              />
-              <MenuButton
-                icon={ShieldCheck}
-                label="Normas"
-                onClick={() => setActiveSection("rules")}
-              />
-              <MenuButton
-                icon={Leaf}
-                label="Cuidado ambiental"
-                onClick={() => setActiveSection("environment")}
-              />
-            </div>
+            {markerDetected ? (
+              <div className="grid grid-cols-2 gap-3 sm:gap-6 place-items-center">
+                <MenuButton
+                  icon={Map}
+                  label="Mapa de parques"
+                  onClick={() => setActiveSection("map")}
+                />
+                <MenuButton
+                  icon={Info}
+                  label="Información"
+                  onClick={() => setActiveSection("info")}
+                />
+                <MenuButton
+                  icon={ShieldCheck}
+                  label="Normas"
+                  onClick={() => setActiveSection("rules")}
+                />
+                <MenuButton
+                  icon={Leaf}
+                  label="Cuidado ambiental"
+                  onClick={() => setActiveSection("environment")}
+                />
+              </div>
+            ) : (
+              <div className="text-center text-sm text-gray-600 py-6">
+                Escanea el marcador Hiro para desplegar el menú.
+              </div>
+            )}
           </div>
         </div>
       </div>
