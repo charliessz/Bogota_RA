@@ -2,14 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Bogotá Verde AR</title>
 
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-
-  <!-- AR.js para A-Frame (marker-based + location) -->
-  <!-- Versión recomendada en la documentación de AR.js -->
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <!-- Versiones fijas compatibles (A-Frame 1.5 + AR.js master fallan en varios móviles) -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/aframe/build/aframe-ar.min.js"></script>
 
   <style>
     body {
@@ -17,20 +16,45 @@
       overflow: hidden;
       font-family: sans-serif;
     }
+    #ar-hint {
+      position: fixed;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 9999;
+      padding: 10px 12px;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      font-size: 14px;
+      line-height: 1.35;
+      border-radius: 8px;
+      pointer-events: none;
+      text-align: center;
+    }
+    #ar-hint.found {
+      background: rgba(0, 100, 0, 0.85);
+    }
   </style>
 </head>
 
 <body>
+  <div id="ar-hint">Apunta la cámara al marcador Hiro (impreso o en otra pantalla, bien iluminado).</div>
+
   <!-- Escena A-Frame con AR.js activado -->
   <a-scene
     embedded
     vr-mode-ui="enabled: false"
-    arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+    renderer="logarithmicDepthBuffer: true; precision: medium;"
+    arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false; detectionMode: mono;"
   >
 
-    <!-- MARCADOR HIRO: todo el contenido se pega a este marcador -->
-    <!-- Puedes usar preset="hiro" según la doc de AR.js -->
-    <a-marker preset="hiro">
+    <!-- Marcador Hiro (patrón oficial en CDN) -->
+    <a-marker
+      type="pattern"
+      url="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.5/data/data/patt.hiro"
+      emitevents="true"
+      id="hiro-marker"
+    >
 
       <!-- ESCENA 3D SENCILLA DEL PARQUE -->
       <!-- Suelo -->
@@ -261,9 +285,8 @@
 
     </a-marker>
 
-    <!-- CÁMARA + CURSOR (CENTRO DE LA PANTALLA) -->
-    <!-- El cursor lanza rayos contra elementos con clase 'clickable' -->
-    <a-entity camera look-controls>
+    <!-- Cámara AR (sin look-controls: en móvil rompe el tracking del marcador) -->
+    <a-entity camera>
       <a-cursor
         raycaster="objects: .clickable"
         fuse="false"
@@ -313,6 +336,19 @@
     let indicePregunta = 0;
 
     document.addEventListener("DOMContentLoaded", () => {
+      const hint = document.getElementById("ar-hint");
+      const marker = document.querySelector("#hiro-marker");
+      if (marker) {
+        marker.addEventListener("markerFound", () => {
+          hint.textContent = "Marcador detectado. Mantén el Hiro estable en la vista.";
+          hint.classList.add("found");
+        });
+        marker.addEventListener("markerLost", () => {
+          hint.textContent = "Marcador perdido. Vuelve a centrar el Hiro en la cámara.";
+          hint.classList.remove("found");
+        });
+      }
+
       // Botones del menú
       const btnMapa      = document.querySelector("#btn-mapa");
       const btnInfo      = document.querySelector("#btn-info");
