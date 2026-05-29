@@ -1,0 +1,6 @@
+.ar-viewport a-scene {
+  position: fixed !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
